@@ -189,7 +189,7 @@ X[, x_label := factor(x_label, levels = .X$x_label)]
 X[, market := factor(market, levels = c("jpg.store", "cnft.io"))]
 
 ggplot(X, aes(x_label, N, fill = market, alpha = sold_time)) +
-  facet_grid(sold_time~.) +
+  facet_grid(sold_time ~ .) +
   geom_hline(yintercept = 0, color = "grey70") +
   geom_bar(stat = "identity") +
   geom_text(aes(label = stat(y), group = x_label),
@@ -470,9 +470,9 @@ Tips would also be greatly appreciated! This would encourage me to maintain and 
 ## Columun 1
 ### About the website
 #### The data
-- Data comes from <a href="https://cnft.io/" target="_blank">cnft.io</a>, <a href="https://www.jpg.store/" target="_blank">jpg.store</a> and <a href="https://www.spacebudz.io/" target="_blank">spacebudz.io</a> maket places.
+- Data comes from <a href="https://cnft.io/" target="_blank">cnft.io</a>, <a href="https://www.jpg.store/" target="_blank">jpg.store</a> and <a href="https://www.spacebudz.io/" target="_blank">spacebudz.io</a> market places.
 - Rank and rarity scores come from <a href="https://cnft.tools/" target="_blank">cnft.tools</a>.
-- The website is updated every ~10mins (expect for the Pavia projects which takes more time). You need to hit `F5` to manually see the updates on the website.
+- The website is updated every ~10mins. You need to hit `F5` to manually see the updates on the website.
 
 #### Disclaimer
 - This is an early version, so there might be some bugs! Use at your own risk
