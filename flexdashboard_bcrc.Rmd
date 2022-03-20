@@ -486,7 +486,6 @@ Tips would also be greatly appreciated! This would encourage me to maintain and 
 - <a href="https://pavia.3dkiwi.io/" target="_blank">Pavia heatmap</a>
 
 ## Column 3
-### Changelog
 ### About me
 - I am passionate about crypto, (c)nfts, stats, and programming!
 - Hit me on discord: <a href="https://discord.com/users/K2#8332/" target="_blank">K2#8332</a>
