@@ -160,7 +160,7 @@ ggplot(X, aes(x_label, N, fill = market, alpha = data_when)) +
 ```
 
 ### Sales
-```{r fig.height=8, fig.width=7}
+```{r, fig.width=9, fig.height=7}
 X <- copy(DTS)
 X[, sold_time := trunc(sold_at_days)]
 X[, sold_time := fcase(trunc(sold_at_days) == 0, "0-24h ago",
