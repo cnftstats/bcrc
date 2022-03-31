@@ -268,7 +268,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 
 
 # Rank {data-icon="fa-signal"}
-## Column 1 {data-width=600, .tabset}
+## Column 1 {data-width=700, .tabset}
 ### Listings x rank
 ```{r}
 min_x <- 1
@@ -370,7 +370,7 @@ ggplotly(gg, tooltip = "text") %>%
 
 > Only listings below `r as.character(max_y)` ada are displayed.
 
-## Column 2 {data-width=400}
+## Column 2 {data-width=300}
 ### Floor listings by rank range
 ```{r}
 X <- DT[, .SD[price == min(price)], rank_range][order(rank_range)]
