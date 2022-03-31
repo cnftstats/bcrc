@@ -243,7 +243,7 @@ datatable(X, class = 'compact stripe hover nowrap',
   formatStyle(columns = 1:ncol(X), fontSize = '90%')
 ```
 
-### Lowest top 1k cats
+### Sweep that floor: Lowest top 1k cats listings
 ```{r}
 X <- DT[asset_rank %in% 1:1000][1:15][order(price)]
 X[, img := sprintf('<img src="%s%d.png" class="img_html">', img_link, asset_number)]
