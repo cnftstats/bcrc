@@ -81,6 +81,7 @@ $(document).ready(function(){
   <li><a href="https://cnftstats.github.io/mocossi">Mocossi</a></li>
   <li><a href="https://cnftstats.github.io/pavia">Pavia</a></li>
   <li><a href="https://cnftstats.github.io/spacebudz">SpaceBudz</a></li>
+  <li><a href="https://cnftstats.github.io/vox">VoxCats</a></li>
 </ul>
 
 # Floor {data-icon="ion-arrow-graph-up-right"}
@@ -304,8 +305,8 @@ gg <- ggplot(X, aes(asset_rank, price, color = top_cat, customdata = custom_data
                                                       "</br>Rank:", asset_rank)))) +
   geom_point(alpha = .6) +
   scale_x_reverse(breaks = scale_x, expand = c(0.03, 0), limits = c(max_x, min_x)) +
-  scale_color_manual(values = c("Common cat" = "steelblue3", "Top 1k cat" = "steelblue4")) +
   scale_y_continuous(n.breaks = 15, limits = c(min_y, max_y)) +
+  scale_color_manual(values = c("Common cat" = "steelblue3", "Top 1k cat" = "steelblue4")) +
   labs(x = "Rank", y = "Listing price", color = "Class") +
   theme(legend.title = element_text(size = 10),
         legend.text = element_text(size = 9))
