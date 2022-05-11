@@ -7,7 +7,6 @@ library(httr)
 
 # Variables ----------------------------------------------------------------------------------------
 policy_id <- "c364930bd612f42e14d156e1c5410511e77f64cab8f2367a9df544d1"
-project <- "Boss Cat Rocket Club"
 time_now <- as_datetime(now())
 
 
@@ -26,109 +25,7 @@ loj <- function (X = NULL, Y = NULL, onCol = NULL) {
 }
 
 
-# CNFT listings ------------------------------------------------------------------------------------
-api_link_cnft <- "https://api.cnft.io/market/listings"
-
-query <- function(page, url, project, sold) {
-  httr::content(httr::POST(
-    url = url, 
-    body = list(
-      search = "", 
-      types = c("listing", "offer", "bundle"),
-      project = project, 
-      sort = list(`_id` = -1L), 
-      priceMin = NULL, 
-      priceMax = NULL, 
-      page = page, 
-      verified = TRUE, 
-      nsfw = FALSE, 
-      sold = sold, 
-      smartContract = NULL
-    ), 
-    encode = "json"
-  ), simplifyVector = TRUE)
-}
-
-query_n <- function(url, project, sold, n = "all") {
-  if (n == "all") n <- query(1L, url, project, sold)[["count"]]
-  out <- vector("list", n)
-  for (i in seq_len(n)) {
-    out[[i]] <- query(i, url, project, sold)[["results"]]
-    if (length(out[[i]]) < 1L) return(out[seq_len(i - 1L)])
-  }
-  out
-}
-
-.CNFT <- query_n(api_link_cnft, project, sold = FALSE) |>
-  lapply(data.table) |> rbindlist(fill = TRUE)
-
-.CNFT[, link := paste0("https://cnft.io/token/", ifelse(is.na(X_id), `_id`, X_id))]
-
-# Initialize data.table
-CNFT <- data.table(asset = NA, asset_number = NA, type = NA, price = NA,
-                   last_offer = NA, sc = NA, market = NA, link = NA)
-
-for (i in 1:nrow(.CNFT)) {
-  CNFT <- rbind(CNFT, data.table(asset        = .CNFT[i, assets[[1]]$metadata$name],
-                                 asset_number = as.numeric(NA),
-                                 type         = .CNFT[i, type],
-                                 price        = .CNFT[i, price],
-                                 last_offer   = .CNFT[i, offers],
-                                 sc           = .CNFT[i, smartContractTxid],
-                                 market       = "cnft.io",
-                                 link         = .CNFT[i, link]))
-}
-
-CNFT <- CNFT[2:nrow(CNFT)] # Clear first row from initialization
-CNFT[, asset_number := extract_num(asset)]
-CNFT[, price        := price/10**6]
-CNFT[, sc           := ifelse(is.na(sc), "no", "yes")]
-
-for (i in 1:nrow(CNFT)) {
-  .offers <- CNFT[i, last_offer[[1]]]
-  if (nrow(.offers) == 0) {
-    CNFT[i, last_offer := NA]
-  } else {
-    CNFT[i, last_offer := max(.offers$offer/10**6)]
-  }
-}
-
-
-# CNFT sales ---------------------------------------------------------------------------------------
-.CNFTS <- query_n(api_link_cnft, project, sold = TRUE, n = 11) |>
-  lapply(data.table) |> rbindlist(fill = TRUE)
-
-.CNFTS <- .CNFTS[!is.na(soldAt)]
-
-# Initialize data.table
-CNFTS <- data.table(asset = NA, asset_number = NA, price = NA,
-                    market = NA, sold_at = NA)
-
-for (i in 1:nrow(.CNFTS)) {
-  CNFTS <- rbind(CNFTS, data.table(asset        = .CNFTS[i, assets[[1]]$metadata$name],
-                                   asset_number = as.numeric(NA),
-                                   price        = .CNFTS[i, price],
-                                   market       = "cnft.io",
-                                   sold_at      = .CNFTS[i, soldAt]))
-}
-
-CNFTS <- CNFTS[2:nrow(CNFTS)] # Clear first row from initialization
-CNFTS[, asset_number  := extract_num(asset)]
-CNFTS[, price         := price/10**6]
-CNFTS[, market        := "cnft.io"]
-CNFTS[, sold_at       := as_datetime(sold_at)]
-CNFTS[, sold_at_hours := difftime(time_now, sold_at, units = "hours")]
-CNFTS[, sold_at_days  := difftime(time_now, sold_at, units = "days")]
-
-CNFTS <- CNFTS[order(-sold_at), .(asset, asset_number, price, sold_at, sold_at_hours, 
-                                  sold_at_days, market)]
-CNFTS <- CNFTS[sold_at_hours <= 24*3]
-
-
 # JPG listings -------------------------------------------------------------------------------------
-# jpg.store/api/policy - all supported policies
-# jpg.store/api/policy/[id]/listings - listings for a given policy
-# jpg.store/api/policy/[id]/sales - sales for a given policy
 JPG_list <- list()
 p <- 1
 while (TRUE) {
@@ -175,10 +72,10 @@ JPGS <- JPGS[sold_at_hours <= 24*3]
 
 # Merge markets data -------------------------------------------------------------------------------
 # Listings
-DT <- rbindlist(list(CNFT, JPG), fill = TRUE, use.names = TRUE)
+DT <- copy(JPG)
 
 # Sales
-DTS <- rbindlist(list(CNFTS, JPGS), fill = TRUE, use.names = TRUE)
+DTS <- copy(JPGS)
 
 # Add data collection timestamp
 DT[, data_date := time_now]
